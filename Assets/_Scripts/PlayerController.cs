@@ -3,12 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
+using UnityEngine.UI;
 
 public enum PlayerSize
 {
     BIG,
     MEDIUM,
     LITTLE
+}
+
+public enum Key
+{
+    BIG,
+    SMALL
 }
 
 public class PlayerController : MonoBehaviour
@@ -29,6 +36,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI tabToPauseLabel;
 
+    [SerializeField]
+    TextMeshProUGUI pressEToPickUp;
+
+    [SerializeField]
+    Image bigKeyUIImage;
+    [SerializeField]
+    Image smallKeyUIImage;
     // Animation setup
     //[SerializeField]
     // Animator animator;
@@ -37,18 +51,25 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     GameManager gameManager;
 
+    [SerializeField]
+    GameObject bigKey;
+    [SerializeField]
+    GameObject smallKey;
+
     bool isPaused;
+    bool hasBigKey;
+    bool hasSmolKey;
+    bool canGetBigKey;
+    bool canGetSmolKey;
 
     // Stuff to do with size changing
     [SerializeField]
     PlayerSize initialPlayerSize;
     
-    PlayerSize playerSize;
+    public PlayerSize playerSize;
     Vector3 big;
     Vector3 medium;
     Vector3 little;
-
-
 
     // UI setup
 
@@ -57,6 +78,9 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+        pressEToPickUp.gameObject.SetActive(false);
+        bigKeyUIImage.gameObject.SetActive(false);
+        smallKeyUIImage.gameObject.SetActive(false);
         moveDirection = Vector3.zero;
         inputVector = Vector2.zero;
         rotationDirection = 0;
@@ -129,16 +153,75 @@ public class PlayerController : MonoBehaviour
         switch (size)
         {
             case PlayerSize.BIG:
-                transform.localScale = big;
+                StartCoroutine(Scale(playerTransform, big, new Vector3(playerTransform.position.x, playerTransform.position.y + 0.2f, playerTransform.position.z), 2f));
                 break;
             case PlayerSize.MEDIUM:
-                transform.localScale = medium;
+                StartCoroutine(Scale(playerTransform, medium, new Vector3(playerTransform.position.x, playerTransform.position.y, playerTransform.position.z), 2f));
                 break;
             case PlayerSize.LITTLE:
+                StartCoroutine(Scale(playerTransform, little, new Vector3(playerTransform.position.x, playerTransform.position.y, playerTransform.position.z), 2f));
                 transform.localScale = little;
                 break;
             default:
                 break;
+        }
+    }
+
+    // https://answers.unity.com/questions/1752632/scale-with-coroutine-and-lerp.html
+
+    IEnumerator Scale(Transform playerTransform, Vector3 upScale, Vector3 endPosition, float duration)
+    {
+        Vector3 initialScale = transform.localScale;
+        Vector3 initialPosition = playerTransform.position;
+
+        for (float time = 0; time < duration; time += Time.deltaTime)
+        {
+            transform.localScale = Vector3.Lerp(initialScale, upScale, time);
+            playerTransform.localPosition = Vector3.Lerp(initialPosition, endPosition, time);
+            yield return null;
+        }
+    }
+
+
+    public void SetCanGetKey(Key key)
+    {
+        switch (key)
+        {
+            case Key.BIG:
+                canGetBigKey = true;
+                pressEToPickUp.gameObject.SetActive(true);
+                break;
+            case Key.SMALL:
+                canGetSmolKey = true;
+                pressEToPickUp.gameObject.SetActive(true);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void SetCannotGetKey()
+    {
+        canGetBigKey = false;
+        canGetSmolKey = false;
+        pressEToPickUp.gameObject.SetActive(false);
+    }
+
+    public void OnPickUp()
+    {
+        if (canGetSmolKey)
+        {
+            hasSmolKey = true;
+            smallKeyUIImage.gameObject.SetActive(true);
+            Destroy(smallKey.gameObject);
+            pressEToPickUp.gameObject.SetActive(false);
+        }
+       if (canGetBigKey)
+        {
+            hasBigKey = true;
+           bigKeyUIImage.gameObject.SetActive(true);
+            Destroy(bigKey.gameObject);
+            pressEToPickUp.gameObject.SetActive(false);
         }
     }
 }
