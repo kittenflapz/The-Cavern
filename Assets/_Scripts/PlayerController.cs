@@ -57,8 +57,8 @@ public class PlayerController : MonoBehaviour
     GameObject smallKey;
 
     bool isPaused;
-    bool hasBigKey;
-    bool hasSmolKey;
+    public bool hasBigKey;
+    public bool hasSmolKey;
     bool canGetBigKey;
     bool canGetSmolKey;
 
