@@ -17,9 +17,9 @@ public class PlayerController : MonoBehaviour
     float rotationDirection;
     private Vector2 inputVector;
 
-    // Animation setup (forgive me)
-    [SerializeField]
-    Animator animator;
+    // Animation setup
+    //[SerializeField]
+   // Animator animator;
 
     // Misc gameplay setup
     bool isPaused;
@@ -54,14 +54,14 @@ public class PlayerController : MonoBehaviour
         moveDirection = playerTransform.forward * inputVector.y;
         rotationDirection = inputVector.x * 1.75f;
 
-        if (moveDirection.magnitude > float.Epsilon || rotationDirection > float.Epsilon)
-        {
-            animator.SetInteger("Walk", 1);
-        }
-        else
-        {
-            animator.SetInteger("Walk", 0);
-        }
+        //if (moveDirection.magnitude > float.Epsilon || rotationDirection > float.Epsilon)
+        //{
+        //    animator.SetInteger("Walk", 1);
+        //}
+        //else
+        //{
+        //    animator.SetInteger("Walk", 0);
+        //}
 
         Vector3 movementDirection = moveDirection * (speed * Time.deltaTime);
         playerTransform.position += movementDirection;
