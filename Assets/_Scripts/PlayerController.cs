@@ -17,6 +17,9 @@ public class PlayerController : MonoBehaviour
     float rotationDirection;
     private Vector2 inputVector;
 
+    [SerializeField]
+    TextMeshProUGUI tabToPauseLabel;
+
     // Animation setup
     //[SerializeField]
    // Animator animator;
@@ -39,11 +42,9 @@ public class PlayerController : MonoBehaviour
         inputVector = Vector2.zero;
         rotationDirection = 0;
         gameManager = FindObjectOfType<GameManager>();
-
         isPaused = false;
-
-        // fixes a bug where if you pause, go to main menu, then load into the game again, it is still paused
         Time.timeScale = 1;
+        tabToPauseLabel.SetText("tab to pause");
     }
 
 
@@ -77,11 +78,13 @@ public class PlayerController : MonoBehaviour
         {
             Time.timeScale = 1;
             isPaused = false;
+            tabToPauseLabel.SetText("tab to pause");
         }
         else
         {
             Time.timeScale = 0;
             isPaused = true;
+            tabToPauseLabel.SetText("tab to unpause");
         }
 
         pauseMenu.SetActive(!pauseMenu.activeInHierarchy);
